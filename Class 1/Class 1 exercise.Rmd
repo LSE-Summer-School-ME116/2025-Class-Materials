@@ -1,0 +1,119 @@
+---  
+title: "ME116 - Introduction to Statistics: Understanding the World through Data"
+subtitle: "Class 1 - Data Summaries"
+author: "Xinhui Liu" 
+date: "23 June, 2025"
+output: html_document 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align = "center")
+rm(list=ls(all=TRUE))
+```
+
+
+## **Question 1**
+The file $\texttt{midterm.csv}$ contains a sample of 100 midterm exam scores from students who took this course in the period 2011-17.
+```{r}
+midt <- read.csv("D:/R data/midterm.csv") # replace this with your own path
+midt[1:10,]  # select the first ten observations
+```
+```{r}
+colnames(midt)
+```
+```{r}
+score <- midt$x  # define a variable score which is the x column of midt
+score
+```
+
+### **(a)**
+Compute the mean and median exam scores.
+```{r}
+mean(score)  # mean score
+sum(score) / length(score)  # alternative way
+```
+```{r}
+median(score)  # median score
+```
+
+### **(b)**
+Compute the quartiles and interquartile range, then draw a box plot of the data.
+```{r}
+summary(score)  # summary of the data
+```
+```{r}
+quantile(score, 0.25)  # 1st quartile
+quantile(score, 0.75)  # 3rd quartile
+quantile(score, 0.5)  # median
+```
+```{r}
+IQR <- quantile(score, 0.75)  - quantile(score, 0.25)  # IQR of the data
+boxplot(score)  # box plot
+boxplot(score, main = "Boxplot of the midterm scores", ylab = "score")
+```
+
+### **(c)**
+Compute the standard deviation of the scores. What proportion os students scored within 2 standard deviations of the mean? 
+```{r}
+sd(score)  # standard deviation of the data
+sqrt( sum( (score - mean(score)) ^2) / (length(score) - 1) )  # alternative way
+```
+
+```{r}
+m_2sdl <- mean(score) - 2 * sd(score)  # mean - 2*sd
+m_2sdh <- mean(score) + 2 * sd(score)  # mean + 2*sd
+m_2sdl
+m_2sdh
+```
+
+```{r}
+score > m_2sdh  # check whether each score is above mean + 2*sd
+sum(score > m_2sdh)  # count how many scores are above mean + 2*sd
+```
+
+```{r}
+score < m_2sdl  # check whether each score is below mean - 2*sd
+sum(score < m_2sdl)  # count how many scores are below mean - 2*sd
+```
+
+```{r}
+length(score) - sum(score > m_2sdh) - sum(score < m_2sdl)  # how many scores are between mean - 2*sd and mean + 2*sd
+```
+
+### **(d)**
+Draw a histogram of exam scores and comment on its shape.
+```{r}
+hist(score)  # histogram
+```
+Some evidence of $\textbf{left skew}$, due to the upper bound at 100.
+
+```{r}
+hist(score, breaks = 15, col = 'light blue')  
+```
+
+### **(e)**
+Using the histogram you have drawn, estimate the probability that a randomly chosen student: 
+
+- passes the course;
+- obtains a grade of A- or higher
+```{r}
+letter <- read.csv("D:/R data/letter_grades.csv") # replace this with your own path
+letter
+```
+```{r}
+sum(score >= 40) / length(score)
+sum(score >= 65) / length(score)
+```
+
+## **Question 2**
+Find a recent example in a newspaper/magazine/blog of a plot that is confusing or misleading. Suggests ways to improve it (or draw an improved plot!)
+
+In $\textit{Financial Times}$, this chart was described as “[One of the worst charts ever](https://www.ft.com/content/58dce921-2cdf-4140-9eb7-77792749dc88).” In an article by ABC encouraging the rental of vacant homes to ease the housing crisis, a line chart was used:
+```{r fig1, echo=FALSE, warning=FALSE, out.width="70%"}
+knitr::include_graphics("D:/R data/Australia.png")
+```
+
+But there were several design problems:
+
+- The label of x axis was unclear: The “total” (overall number) was placed on the same axis as regional indicators, making the comparison meaningless;
+- A line chart was used instead of a more appropriate bar chart for categorical comparison.
